@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Music Library | Presbyterian Church of the Redeemer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f4f6fa;--surface:#ffffff;--ink:#14213d;--muted:#5b6679;--line:#d9dfe9;--hero:#14213d;--hero-ink:#f4f6fa;
+  --gold:#c8962e;--staff:#14213d;--staff-ink:#ffffff;--sol:#0f766e;--sol-bg:#d9f2ee;
+  --general:#4a5a73;--advent:#4b3a8f;--christmas:#b8892b;--lent:#7a2f6b;--easter:#d6b24a;--pentecost:#c0392b;--ordinary:#2f7d4f;
+  --serif:'Newsreader',Georgia,serif;--sans:'Instrument Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1626;--surface:#16213a;--ink:#eef1f7;--muted:#9aa6bd;--line:#2a3855;--hero:#0a111f;--hero-ink:#eef1f7;
+  --staff:#eef1f7;--staff-ink:#14213d;--sol:#5fd3c6;--sol-bg:#12363a;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e1626;--surface:#16213a;--ink:#eef1f7;--muted:#9aa6bd;--line:#2a3855;--hero:#0a111f;--hero-ink:#eef1f7;
+  --staff:#eef1f7;--staff-ink:#14213d;--sol:#5fd3c6;--sol-bg:#12363a;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+header.hero{background:var(--hero);color:var(--hero-ink);padding:48px 0 0}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.01em}
+.lede{max-width:52ch;margin:0 0 28px;color:#c3cbdb;font-size:1.05rem}
+.search{display:block;width:100%;max-width:520px;padding:14px 16px;border-radius:8px;border:1px solid transparent;background:#fff;color:#14213d;font-size:1rem}
+.search::placeholder{color:#6a7385}
+
+/* season ribbon: the filter, drawn as the church year */
+.ribbon{display:flex;margin-top:36px;height:64px;gap:2px}
+.ribbon button{flex:var(--w) 1 0;min-width:0;border:0;cursor:pointer;color:#fff;font-weight:600;font-size:.82rem;padding:0 6px;
+  background:var(--c);display:flex;align-items:flex-end;justify-content:flex-start;text-align:left;padding-bottom:8px;
+  opacity:.72;transition:opacity .15s,height .15s;position:relative}
+.ribbon button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ribbon button:hover{opacity:1}
+.ribbon button[aria-pressed="true"]{opacity:1;box-shadow:inset 0 -6px 0 rgba(255,255,255,.9)}
+.ribbon button.light{color:#2a2208}
+.ribbon.hasSel button:not([aria-pressed="true"]){opacity:.4}
+
+.controls{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;padding:20px 0;border-bottom:1px solid var(--line)}
+.group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.group>b{font-weight:600;color:var(--muted);font-size:.9rem;margin-right:2px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.count{margin-left:auto;color:var(--muted);font-size:.92rem}
+
+ul.songs{list-style:none;margin:0;padding:8px 0 56px}
+li.song{display:grid;grid-template-columns:6px 1fr auto;gap:0 16px;background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-top:10px;overflow:hidden}
+li.song .edge{background:var(--c)}
+li.song .body{padding:14px 0}
+li.song h2{font-family:var(--serif);font-size:1.3rem;margin:0 0 2px;font-weight:600}
+.meta{color:var(--muted);font-size:.92rem;margin:0 0 8px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:4px;padding:3px 9px;font-size:.82rem;font-weight:600}
+.badge.staff{background:var(--staff);color:var(--staff-ink)}
+.badge.sol{background:var(--sol-bg);color:var(--sol);border:1.5px dashed var(--sol)}
+.badge svg{width:16px;height:12px}
+.season-tag{font-size:.85rem;color:var(--muted)}
+.actions{display:flex;align-items:center;gap:8px;padding:14px 16px 14px 0}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.empty{padding:48px 0;text-align:center;color:var(--muted)}
+.empty button{margin-top:12px}
+
+dialog{border:0;border-radius:10px;padding:0;width:min(920px,94vw);height:min(86vh,760px);background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(8,14,26,.65)}
+.dlg{display:flex;flex-direction:column;height:100%}
+.dlg header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.dlg header h3{margin:0;font-family:var(--serif);font-size:1.15rem;flex:1}
+.dlg .stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted)}
+.dlg iframe{width:100%;height:100%;border:0}
+.dlg audio{width:100%;padding:10px 16px;border-top:1px solid var(--line)}
+@media (max-width:560px){
+  li.song{grid-template-columns:6px 1fr}
+  .actions{grid-column:2;padding:0 16px 14px 0}
+  .ribbon{height:56px}.ribbon button{font-size:.7rem}
+  .count{margin-left:0;width:100%}
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--hero);z-index:30}
+html{scroll-behavior:smooth}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hero);border-bottom:1px solid rgba(255,255,255,.12)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:700;font-size:1.15rem;color:#fff;text-decoration:none;margin-right:auto}
+.brand svg{width:26px;height:26px;color:var(--gold)}
+.nav a.lnk{color:#c3cbdb;text-decoration:none;font-weight:500;font-size:.95rem;padding:6px 2px;border-bottom:2px solid transparent}
+.nav a.lnk:hover{color:#fff;border-color:var(--gold)}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 28px}
+.hero .btn{background:var(--gold);border-color:var(--gold);color:#1b1608;text-decoration:none;padding:12px 22px}
+.hero .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+header.hero{padding-top:64px}
+.sec{padding:56px 0}
+.sec h2.t{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.2rem);margin:0 0 8px}
+.sec p.sub{color:var(--muted);max-width:60ch;margin:0 0 28px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.how div{border-top:3px solid var(--gold);padding-top:14px}
+.how h3{font-family:var(--serif);font-size:1.25rem;margin:0 0 6px}
+.how p{margin:0;color:var(--muted)}
+.band{background:var(--hero);color:var(--hero-ink)}
+.band .sub{color:#c3cbdb}
+.band ul{margin:0;padding-left:20px;max-width:60ch}
+.band li{margin:6px 0}
+footer.foot{background:#0a111f;color:#9aa6bd;padding:32px 0;font-size:.92rem}
+footer.foot .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+footer.foot b{color:#fff;font-family:var(--serif);font-size:1.05rem;margin-right:auto}
+footer.foot a{color:#c3cbdb}
+#library{scroll-margin-top:72px}
+@media (max-width:640px){.brand{font-size:.95rem;line-height:1.15}.how{grid-template-columns:1fr}.nav a.lnk.hide{display:none}.nav .wrap{gap:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="Main"><div class="wrap">
+  <a class="brand" href="#top"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3v12.3A3.5 3.5 0 1 0 11 18.5V8h8V3H9z"/></svg>Presbyterian Church of the Redeemer</a>
+  <a class="lnk" href="#library">Songs</a>
+  <a class="lnk hide" href="#how">How it works</a>
+  <a class="lnk" href="#leaders">For leaders</a>
+</div></nav>
+<header class="hero" id="top">
+  <div class="wrap">
+    <h1>Every song for every Sunday, in one place.</h1>
+    <p class="lede">The music library of the Presbyterian Church of the Redeemer. Find the music for the season, open the score, and play the audio to learn your part. Choose Tonic sol-fa or staff notation.</p>
+    <div class="cta"><a class="btn" href="#library">Browse songs</a><a class="btn ghost" href="#leaders">Add a song</a></div>
+    <input id="q" class="search" type="search" placeholder="Search by title or composer" aria-label="Search songs">
+    <div id="ribbon" class="ribbon" role="group" aria-label="Filter by season"></div>
+  </div>
+</header>
+
+<main class="wrap" id="library">
+  <div class="sec" style="padding-bottom:0"><h2 class="t">Songs</h2><p class="sub" style="margin:0">Pick a season above, or narrow the list by notation and song type.</p></div>
+  <div class="controls">
+    <div class="group" id="notation" role="group" aria-label="Notation"><b>Notation</b></div>
+    <div class="group" id="type" role="group" aria-label="Song type"><b>Type</b></div>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+  <ul class="songs" id="list"></ul>
+</main>
+
+<section class="sec" id="how"><div class="wrap">
+  <h2 class="t">How it works</h2>
+  <p class="sub">Everything is sorted by the church year, then by who sings or plays it.</p>
+  <div class="how">
+    <div><h3>Find your song</h3><p>Search by title or composer, or pick a season and a song type.</p></div>
+    <div><h3>Open the score</h3><p>The PDF opens on this page. Tonic sol-fa and staff scores have different badges.</p></div>
+    <div><h3>Learn your part</h3><p>Press play on the audio and sing or play along.</p></div>
+  </div>
+</div></section>
+
+<section class="sec band" id="leaders"><div class="wrap">
+  <h2 class="t">For music leaders</h2>
+  <p class="sub">Only a few music leaders add songs. To add one:</p>
+  <ul><li>Upload the PDF and audio to the shared folder and set sharing to "Anyone with the link".</li><li>Add a row to the song sheet with the title, season, type, notation and links.</li><li>Check that the song shows up here and the score opens.</li></ul>
+</div></section>
+
+<footer class="foot"><div class="wrap"><b>Presbyterian Church of the Redeemer, Music Library</b><a href="#library">Songs</a><a href="#how">How it works</a><a href="#leaders">For leaders</a><a href="#top">Back to top</a></div></footer>
+
+<dialog id="dlg" aria-labelledby="dtitle">
+  <div class="dlg">
+    <header><h3 id="dtitle"></h3><a id="dopen" class="btn ghost" target="_blank" rel="noopener" style="text-decoration:none">Open in new tab</a><button class="btn" id="dclose">Close</button></header>
+    <div class="stage" id="stage"></div>
+    <div id="audioWrap"></div>
+  </div>
+</dialog>
+
+<script>
+var SHEET_URL="https://script.google.com/macros/s/AKfycbzzHgv9iPcnjUt9iVcgfzWSmLPnyP-xjrANf188fMcpsV8q-Jpnni9Y3RhLSNX6FKmN/exec";
+var SONGS=[],status="loading";
+function key(k){return String(k).toLowerCase().replace(/[^a-z0-9]/g,"")}
+function pick(o,names){for(var k in o){if(names.indexOf(key(k))>-1&&o[k]!==""&&o[k]!=null)return String(o[k]).trim()}return ""}
+function seasonName(v){var l=v.toLowerCase();for(var i=0;i<SEASONS.length;i++){if(SEASONS[i].n.toLowerCase()===l||(l==="ordinary"&&SEASONS[i].n==="Ordinary Time"))return SEASONS[i].n}return v}
+function notationName(v){var l=v.toLowerCase();if(!l)return "";if(l.indexOf("sol")>-1||l.indexOf("tonic")>-1)return "Tonic sol-fa";if(l.indexOf("staff")>-1)return "Staff";return v}
+function norm(o){return{title:pick(o,["title","song","songtitle","name"]),composer:pick(o,["composer","artist","author"]),
+ season:seasonName(pick(o,["season"])),type:pick(o,["type","songtype"]),notation:notationName(pick(o,["notation","notationtype"])),
+ key:pick(o,["key"]),pdf:pick(o,["pdf","pdflink","pdfurl","score"]),audio:pick(o,["audio","audiolink","audiourl"])}}
+function load(){
+  status="loading";sync();
+  fetch(SHEET_URL).then(function(r){return r.json()}).then(function(d){
+    var arr=Array.isArray(d)?d:(d.songs||d.data||d.rows||[]);
+    SONGS=arr.map(norm).filter(function(s){return s.title});status="ok";sync();
+  }).catch(function(){status="error";sync()});
+}
+var SEASONS=[
+ {n:"General",c:"var(--general)",w:4},{n:"Advent",c:"var(--advent)",w:4},{n:"Christmas",c:"var(--christmas)",w:3,l:1},{n:"Lent",c:"var(--lent)",w:6},
+ {n:"Easter",c:"var(--easter)",w:7,l:1},{n:"Pentecost",c:"var(--pentecost)",w:2},{n:"Ordinary Time",c:"var(--ordinary)",w:10}
+];
+var TYPES=["Choir","Solo","Instrumental"],NOTES=["Staff","Tonic sol-fa"];
+var st={q:"",season:"",notation:"",type:""};
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function sc(n){var s=SEASONS.filter(function(x){return x.n===n})[0];return s?s.c:"var(--muted)"}
+function driveAudio(u){var m=u.match(/\/d\/([^/]+)/)||u.match(/[?&]id=([^&]+)/);return m?"https://drive.google.com/uc?export=download&id="+m[1]:u}
+function drivePdf(u){var m=u.match(/\/d\/([^/]+)/)||u.match(/[?&]id=([^&]+)/);return m?"https://drive.google.com/file/d/"+m[1]+"/preview":u}
+
+function buildRibbon(){
+  var r=$("ribbon");r.innerHTML="";
+  SEASONS.forEach(function(s){
+    var b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed","false");
+    b.style.setProperty("--c",s.c);b.style.setProperty("--w",s.w);if(s.l)b.className="light";
+    b.innerHTML="<span>"+s.n+"</span>";
+    b.onclick=function(){st.season=st.season===s.n?"":s.n;sync()};
+    r.appendChild(b);
+  });
+}
+function chips(id,arr,key){
+  var g=$(id);
+  arr.forEach(function(v){
+    var b=document.createElement("button");b.type="button";b.className="chip";b.textContent=v;b.setAttribute("aria-pressed","false");b.dataset.v=v;
+    b.onclick=function(){st[key]=st[key]===v?"":v;sync()};g.appendChild(b);
+  });
+}
+var STAFF_ICON='<svg viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 1h16M0 4h16M0 7h16M0 10h16"/></svg>';
+var SOL_ICON='<svg viewBox="0 0 16 12" fill="currentColor"><text x="0" y="10" font-size="10" font-family="Georgia,serif" font-weight="700">d r m</text></svg>';
+
+function sync(){
+  var rb=$("ribbon");rb.classList.toggle("hasSel",!!st.season);
+  Array.prototype.forEach.call(rb.children,function(b,i){b.setAttribute("aria-pressed",String(SEASONS[i].n===st.season))});
+  [["notation","notation"],["type","type"]].forEach(function(p){
+    Array.prototype.forEach.call($(p[0]).querySelectorAll(".chip"),function(b){b.setAttribute("aria-pressed",String(st[p[1]]===b.dataset.v))});
+  });
+  var q=st.q.toLowerCase();
+  var res=SONGS.filter(function(s){
+    return (!st.season||s.season===st.season)&&(!st.notation||s.notation===st.notation)&&(!st.type||s.type===st.type)&&
+      (!q||(s.title+" "+s.composer).toLowerCase().indexOf(q)>-1);
+  });
+  $("count").textContent=res.length+(res.length===1?" song":" songs");
+  var ul=$("list");
+  if(status==="loading"){$("count").textContent="";ul.innerHTML='<li class="empty">Loading songs...</li>';return}
+  if(status==="error"){$("count").textContent="";ul.innerHTML='<li class="empty">Could not load the songs.<br>Check that the Apps Script is deployed for "Anyone", then try again.<br><button class="btn" id="retry">Try again</button></li>';$("retry").onclick=load;return}
+  if(!res.length){ul.innerHTML='<li class="empty">No songs match these filters.<br><button class="btn" id="clr">Clear filters</button></li>';
+    $("clr").onclick=function(){st={q:"",season:"",notation:"",type:""};$("q").value="";sync()};return}
+  ul.innerHTML=res.map(function(s){
+    var i=SONGS.indexOf(s),sol=s.notation==="Tonic sol-fa";
+    return '<li class="song" style="--c:'+sc(s.season)+'"><div class="edge"></div><div class="body"><h2>'+esc(s.title)+'</h2>'+
+      ((s.composer||s.key)?'<p class="meta">'+esc(s.composer)+(s.composer&&s.key?", ":"")+(s.key?"key of "+esc(s.key):"")+'</p>':"")+
+      '<div class="tags">(s.notation?'<span class="badge '+(sol?"sol":"staff")+'">'+(sol?SOL_ICON:STAFF_ICON)+esc(s.notation)+'</span>':"")+'+
+      '<span class="season-tag">'+esc(s.season)+", "+esc(s.type)+'</span></div></div>'+
+      '<div class="actions"><button class="btn" data-i="'+i+'">View score</button></div></li>';
+  }).join("");
+  Array.prototype.forEach.call(ul.querySelectorAll(".btn[data-i]"),function(b){b.onclick=function(){openSong(SONGS[b.dataset.i])}});
+}
+function openSong(s){
+  var d=$("dlg"),stg=$("stage");$("dtitle").textContent=s.title;
+  var o=$("dopen");
+  if(s.pdf){stg.innerHTML='<iframe title="'+esc(s.title)+' score" src="'+esc(drivePdf(s.pdf))+'"></iframe>';stg.style.padding="0";o.href=s.pdf;o.style.display=""}
+  else{stg.style.padding="24px";stg.textContent="No PDF is attached to this song yet.";o.style.display="none"}
+  $("audioWrap").innerHTML=s.audio?'<audio controls src="'+esc(driveAudio(s.audio))+'"></audio>':"";
+  if(d.showModal)d.showModal();else d.setAttribute("open","");
+}
+$("dclose").onclick=function(){$("dlg").close();$("stage").innerHTML="";$("audioWrap").innerHTML=""};
+$("dlg").addEventListener("close",function(){$("stage").innerHTML="";$("audioWrap").innerHTML=""});
+$("q").addEventListener("input",function(e){st.q=e.target.value;sync()});
+buildRibbon();chips("notation",NOTES,"notation");chips("type",TYPES,"type");load();
+</script>
+</body>
+</html>
